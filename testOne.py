@@ -15,8 +15,8 @@ from models.r2gen import R2GenModel
 # 1. 终极参数配置
 # =====================================================================
 class Args:
-    ann_path = 'D:/GraduateMaster/R2GEN-Finetuning-main/R2Gen-Finetuning-main/data/iu_xray/annotation.json'
-    image_dir = 'D:/GraduateMaster/R2GEN-Finetuning-main/R2Gen-Finetuning-main/data/iu_xray/images/'
+    ann_path = 'data/iu_xray/annotation.json'
+    image_dir = 'data/iu_xray/images/'
     vocab_path = 'data/iu_xray/vocab8.pkl'  # 自动对齐你本地的 vocab8.pkl
 
     dataset_name = 'iu_xray'
@@ -76,7 +76,7 @@ args = Args()
 tokenizer = modules.tokenizers.Tokenizer(args)
 model = R2GenModel(args, tokenizer).to(device)
 
-ckpt_path = 'D:/GraduateMaster/R2Gen-Finetuning-main/R2Gen-Finetuning-main/results/iu_xray/checkpoint_epoch_4_Best.pth'
+ckpt_path = 'results/iu_xray/checkpoint_epoch_4_Best.pth'
 print(f"📥 正在读取微调权重存档: {ckpt_path}")
 
 checkpoint = torch.load(ckpt_path, map_location=device, weights_only=True)
@@ -147,7 +147,7 @@ def predict_patient_images(path):
 # =====================================================================
 if __name__ == '__main__':
     # 指向你的病人文件夹路径（现在可以直接写文件夹了！）
-    my_image_path = 'D:/GraduateMaster/R2GEN-Finetuning-main/R2Gen-Finetuning-main/data/iu_xray/images/CXR1491_IM-0317'
+    my_image_path = 'data/iu_xray/images/CXR1491_IM-0317'
 
     print(f"🔍 正在分析诊断目标: {my_image_path}")
     print("=" * 60)
