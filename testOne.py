@@ -9,7 +9,7 @@ from PIL import Image
 from torchvision import transforms
 import modules.tokenizers
 from models.r2gen import R2GenModel
-
+import urllib.request
 
 # =====================================================================
 # 1. 终极参数配置
@@ -76,13 +76,33 @@ args = Args()
 tokenizer = modules.tokenizers.Tokenizer(args)
 model = R2GenModel(args, tokenizer).to(device)
 
+# =====================================================================
+# 🌟 智能权重托管与自动下载
+# =====================================================================
 ckpt_path = 'results/iu_xray/checkpoint_epoch_4_Best.pth'
-print(f"📥 正在读取微调权重存档: {ckpt_path}")
 
+if not os.path.exists(ckpt_path):
+    print("侦测到云端未携带权重文件，正在启动动态托管下载...")
+    # 创建本地存放权重的多级文件夹
+    os.makedirs(os.path.dirname(ckpt_path), exist_ok=True)
+
+    # 🔗 这里替换成你的直链下载 URL（务必是点击就能直接弹出下载保存框的链接）
+    # 示例：你可以把权重丢到 Hugging Face 的某个公开 Repo 里的 resolve 链接
+    download_url = "https://huggingface.co/labmoby/r2gen_mfa/resolve/main/checkpoint_epoch_4_Best.pth"
+
+    try:
+        print(f"📥 正在从远程服务器下载模型权重至: {ckpt_path} ...")
+        urllib.request.urlretrieve(download_url, ckpt_path)
+        print("✨ 权重文件成功下载并安全落盘！")
+    except Exception as e:
+        print(f"❌ 下载失败，请检查链接是否有效。错误信息: {e}")
+
+# 正常读取落盘后的权重
+print(f"📥 正在读取微调权重存档: {ckpt_path}")
 checkpoint = torch.load(ckpt_path, map_location=device, weights_only=True)
 model.load_state_dict(checkpoint['state_dict'], strict=False)
 model.eval()
-print("✅ 模型和词表全部加载成功！\n")
+print("✅ 模型、词表、微调参数全状态加载成功！应用正式就绪！\n")
 
 # 图像预处理
 transform = transforms.Compose([
